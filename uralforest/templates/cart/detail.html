@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs"><a href="{% url 'core:home' %}">Главная</a><span>/</span><span>Корзина</span></nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container">
+        <h1 class="section__title">Корзина</h1>
+
+        {% if cart|length %}
+        <div class="cart-layout">
+            <div class="cart-table-wrap">
+                <table class="cart-table">
+                    <thead>
+                        <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td data-label="Товар">
+                                <a href="{{ item.product.get_absolute_url }}" class="cart-table__name">{{ item.product.name }}</a>
+                                {% if item.product.size %}<span class="cart-table__meta">{{ item.product.size }}</span>{% endif %}
+                            </td>
+                            <td data-label="Цена">{{ item.price|floatformat:0 }} ₽/{{ item.product.get_unit_display }}</td>
+                            <td data-label="Кол-во">
+                                <form action="{% url 'cart:update' item.product.id %}" method="post" class="cart-qty">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity|floatformat:'-3' }}" min="0.1" step="0.1" class="form-control" onchange="this.form.submit()">
+                                    <span>{{ item.product.get_unit_display }}</span>
+                                </form>
+                            </td>
+                            <td data-label="Сумма"><strong>{{ item.total|floatformat:0 }} ₽</strong></td>
+                            <td data-label="">
+                                <form action="{% url 'cart:remove' item.product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="link-remove" title="Удалить">&times;</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <aside class="cart-summary">
+                <h3>Итого</h3>
+                <div class="cart-summary__row"><span>Позиций</span><span>{{ cart|length }}</span></div>
+                <div class="cart-summary__row cart-summary__row--total"><span>К оплате</span><span>{{ cart.total|floatformat:0 }} ₽</span></div>
+                <a href="{% url 'orders:checkout' %}" class="btn btn--primary btn--lg btn--block">Оформить заказ</a>
+                <a href="{% url 'catalog:list' %}" class="btn btn--ghost btn--block">Продолжить покупки</a>
+            </aside>
+        </div>
+        {% else %}
+            <p class="empty-note">Ваша корзина пуста. Перейдите в <a href="{% url 'catalog:list' %}">каталог</a>, чтобы выбрать пиломатериалы.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

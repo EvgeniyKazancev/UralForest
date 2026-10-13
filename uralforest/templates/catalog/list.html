@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Каталог пиломатериалов — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs">
+        <a href="{% url 'core:home' %}">Главная</a>
+        <span>/</span>
+        {% if current_category %}
+            <a href="{% url 'catalog:list' %}">Каталог</a><span>/</span><span>{{ current_category.name }}</span>
+        {% else %}
+            <span>Каталог</span>
+        {% endif %}
+    </nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container">
+        <div class="section__head section__head--left">
+            <h1 class="section__title">{% if current_category %}{{ current_category.name }}{% else %}Каталог пиломатериалов{% endif %}</h1>
+            {% if current_category and current_category.description %}<p class="section__subtitle">{{ current_category.description }}</p>{% endif %}
+        </div>
+
+        <div class="catalog-layout">
+            <aside class="catalog-sidebar">
+                <h3 class="catalog-sidebar__title">Категории</h3>
+                <ul class="catalog-sidebar__list">
+                    <li><a href="{% url 'catalog:list' %}" class="{% if not current_category %}is-active{% endif %}">Все товары</a></li>
+                    {% for cat in categories %}
+                        <li><a href="{{ cat.get_absolute_url }}" class="{% if current_category and current_category.pk == cat.pk %}is-active{% endif %}">{{ cat.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </aside>
+
+            <div class="catalog-main">
+                <div class="catalog-toolbar">
+                    <form method="get" class="catalog-search">
+                        {% if current_category %}<input type="hidden" name="category" value="{{ current_category.slug }}">{% endif %}
+                        <input type="search" name="q" value="{{ query }}" placeholder="Поиск по названию или размеру" class="form-control">
+                        <button type="submit" class="btn btn--primary">Найти</button>
+                    </form>
+                    <form method="get" class="catalog-sort">
+                        {% if current_category %}<input type="hidden" name="category" value="{{ current_category.slug }}">{% endif %}
+                        {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                        <select name="sort" class="form-control" onchange="this.form.submit()">
+                            <option value="" {% if not sort %}selected{% endif %}>Сортировка: по умолчанию</option>
+                            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Цена ↑</option>
+                            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Цена ↓</option>
+                            <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Название А–Я</option>
+                            <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>Название Я–А</option>
+                            <option value="new" {% if sort == 'new' %}selected{% endif %}>Новинки</option>
+                        </select>
+                    </form>
+                </div>
+
+                <p class="catalog-count">Найдено позиций: <strong>{{ products|length }}</strong></p>
+
+                <div class="products-grid products-grid--catalog">
+                    {% for product in products %}
+                        {% include "partials/product_card.html" with product=product %}
+                    {% empty %}
+                        <p class="empty-note">Ничего не найдено. Измените параметры поиска или выберите другую категорию.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

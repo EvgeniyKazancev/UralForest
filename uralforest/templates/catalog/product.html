@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.meta_title|default:product.name }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ product.meta_description|default:product.short_description }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs">
+        <a href="{% url 'core:home' %}">Главная</a><span>/</span>
+        <a href="{% url 'catalog:list' %}">Каталог</a><span>/</span>
+        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a><span>/</span>
+        <span>{{ product.name }}</span>
+    </nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container product-detail">
+        <div class="product-detail__gallery">
+            <div class="product-detail__main">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="mainImage">
+                {% else %}
+                    <span class="img-placeholder img-placeholder--lg"><svg viewBox="0 0 24 24" width="80" height="80"><path fill="#9db8a3" d="M4 4h16v16H4V4Zm2 2v9l3-3 3 4 2-2 4 5H6V6Z"/></svg></span>
+                {% endif %}
+            </div>
+            {% if product.images.all %}
+                <div class="product-detail__thumbs">
+                    {% for img in product.images.all %}
+                        <button type="button" class="thumb" data-src="{{ img.image.url }}">
+                            <img src="{{ img.image.url }}" alt="{{ img.alt|default:product.name }}">
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="product-detail__info">
+            <span class="product-detail__cat">{{ product.category.name }}</span>
+            <h1 class="product-detail__title">{{ product.name }}</h1>
+            {% if product.short_description %}<p class="product-detail__short">{{ product.short_description }}</p>{% endif %}
+
+            <div class="product-detail__price">
+                {% if product.is_on_sale %}<span class="price-old">{{ product.old_price|floatformat:0 }} ₽</span>{% endif %}
+                <span class="price-new price-new--lg">от {{ product.price|floatformat:0 }} ₽<small>/{{ product.get_unit_display }}</small></span>
+            </div>
+
+            <p class="stock stock--{{ product.stock }}">{{ product.get_stock_display }}</p>
+
+            <form action="{% url 'cart:add' product.id %}" method="post" class="js-add-cart buy-form">
+                {% csrf_token %}
+                <label class="buy-form__qty">
+                    <span>Количество, {{ product.get_unit_display }}</span>
+                    <input type="number" name="quantity" value="1" min="0.1" step="0.1" class="form-control">
+                </label>
+                <button type="submit" class="btn btn--primary btn--lg btn--block">Добавить в корзину</button>
+            </form>
+
+            <div class="product-detail__actions">
+                <button type="button" class="btn btn--outline" data-modal-open="callback">Узнать стоимость</button>
+                {% if site.whatsapp_link %}<a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener" class="btn btn--ghost">Написать в WhatsApp</a>{% endif %}
+            </div>
+
+            <table class="specs">
+                {% if product.size %}<tr><th>Размер</th><td>{{ product.size }}</td></tr>{% endif %}
+                {% if product.thickness %}<tr><th>Толщина</th><td>{{ product.thickness }} мм</td></tr>{% endif %}
+                {% if product.width %}<tr><th>Ширина</th><td>{{ product.width }} мм</td></tr>{% endif %}
+                {% if product.length %}<tr><th>Длина</th><td>{{ product.length }} мм</td></tr>{% endif %}
+                {% if product.wood_type %}<tr><th>Порода</th><td>{{ product.wood_type }}</td></tr>{% endif %}
+                {% if product.grade %}<tr><th>Сорт</th><td>{{ product.grade }}</td></tr>{% endif %}
+                {% if product.moisture %}<tr><th>Влажность</th><td>{{ product.moisture }}</td></tr>{% endif %}
+                {% if product.per_cube %}<tr><th>В 1 м³</th><td>{{ product.per_cube }} шт</td></tr>{% endif %}
+            </table>
+        </div>
+    </div>
+
+    {% if product.description %}
+    <div class="container">
+        <div class="product-detail__description">
+            <h2>Описание</h2>
+            {{ product.description|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+{% if related %}
+<section class="section section--muted">
+    <div class="container">
+        <div class="section__head section__head--left"><h2 class="section__title">Похожие товары</h2></div>
+        <div class="products-grid">
+            {% for product in related %}
+                {% include "partials/product_card.html" with product=product %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

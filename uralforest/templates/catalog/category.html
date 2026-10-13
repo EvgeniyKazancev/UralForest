@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.meta_title|default:category.name }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ category.meta_description }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs">
+        <a href="{% url 'core:home' %}">Главная</a><span>/</span>
+        <a href="{% url 'catalog:list' %}">Каталог</a><span>/</span>
+        <span>{{ category.name }}</span>
+    </nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container">
+        <div class="section__head section__head--left">
+            <h1 class="section__title">{{ category.name }}</h1>
+            {% if category.description %}<div class="category-desc">{{ category.description|linebreaks }}</div>{% endif %}
+        </div>
+
+        <div class="products-grid products-grid--catalog">
+            {% for product in products %}
+                {% include "partials/product_card.html" with product=product %}
+            {% empty %}
+                <p class="empty-note">В этой категории пока нет товаров.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

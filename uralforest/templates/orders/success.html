@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ №{{ order.number }} — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="order-result">
+            <div class="order-result__icon">✓</div>
+            <h1>Спасибо! Заказ №{{ order.number }} принят</h1>
+            <p class="order-result__lead">
+                Менеджер свяжется с вами по номеру <strong>{{ order.phone }}</strong> для подтверждения заказа.
+            </p>
+
+            <div class="order-result__status">
+                <span>Статус заказа: <strong>{{ order.get_status_display }}</strong></span>
+                <span>Оплата: <strong>{{ order.get_payment_status_display }}</strong></span>
+                <span>Сумма: <strong>{{ order.total|floatformat:0 }} ₽</strong></span>
+            </div>
+
+            {% if order.payment_status != 'paid' %}
+                {% if order.payment_method == 'card' or order.payment_method == 'sbp' %}
+                    <div class="order-result__pay">
+                        <p>Заказ можно оплатить онлайн:</p>
+                        <a href="{% url 'payments:start' order.number %}" class="btn btn--primary btn--lg">
+                            {% if order.payment_method == 'sbp' %}Оплатить по QR-коду (СБП){% else %}Оплатить картой{% endif %}
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <table class="order-table">
+                <thead><tr><th>Товар</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr></thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td data-label="Товар">{{ item.name }}</td>
+                            <td data-label="Кол-во">{{ item.quantity|floatformat:'-3' }} {{ item.unit }}</td>
+                            <td data-label="Цена">{{ item.price|floatformat:0 }} ₽</td>
+                            <td data-label="Сумма">{{ item.total|floatformat:0 }} ₽</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="order-result__actions">
+                <a href="{% url 'catalog:list' %}" class="btn btn--outline">Вернуться в каталог</a>
+                <a href="{% url 'core:contacts' %}" class="btn btn--ghost">Связаться с нами</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

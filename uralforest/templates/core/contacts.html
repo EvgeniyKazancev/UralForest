@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Контакты — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs"><a href="{% url 'core:home' %}">Главная</a><span>/</span><span>Контакты</span></nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container">
+        <h1 class="section__title">Контакты</h1>
+        <p class="contacts__lead">По всем интересующим вас вопросам вы можете связаться с нами по телефонам или написать на почту.</p>
+
+        <div class="contacts-grid">
+            <div class="contacts__info">
+                <ul class="contacts__list">
+                    <li><span>Телефоны</span>
+                        {% for phone in site.phones %}
+                            <a href="tel:{{ phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">{{ phone }}</a>
+                        {% endfor %}
+                    </li>
+                    <li><span>Почта</span><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+                    {% if site.address %}<li><span>Адрес</span>{{ site.address }}</li>{% endif %}
+                    {% if site.legal_address %}<li><span>Юр. адрес</span>{{ site.legal_address }}</li>{% endif %}
+                    {% if site.work_hours %}<li><span>Режим работы</span>{{ site.work_hours }}</li>{% endif %}
+                </ul>
+
+                {% if site.inn or site.ogrn or site.kpp %}
+                <div class="requisites">
+                    <h3>Реквизиты</h3>
+                    {% if site.inn %}<p>ИНН: {{ site.inn }}</p>{% endif %}
+                    {% if site.kpp %}<p>КПП: {{ site.kpp }}</p>{% endif %}
+                    {% if site.ogrn %}<p>ОГРН: {{ site.ogrn }}</p>{% endif %}
+                </div>
+                {% endif %}
+
+                {% if site.map_embed %}<div class="contacts__map">{{ site.map_embed|safe }}</div>{% endif %}
+            </div>
+
+            <div class="contacts__form">
+                {% include "partials/lead_form.html" with kind="contact" title="Напишите нам" button="Отправить сообщение" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

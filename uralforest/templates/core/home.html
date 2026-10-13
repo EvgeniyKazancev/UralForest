@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}{{ site.meta_title|default:site.company_name }} — пиломатериалы в Екатеринбурге{% endblock %}
+
+{% block content %}
+
+<section class="hero" {% if site.hero_image %}style="background-image:linear-gradient(90deg, rgba(20,45,28,.85), rgba(20,45,28,.45)), url('{{ site.hero_image.url }}');"{% endif %}>
+    <div class="container hero__inner">
+        <div class="hero__content">
+            <h1 class="hero__title">{{ site.hero_title }}</h1>
+            <p class="hero__subtitle">{{ site.hero_subtitle }}</p>
+            <ul class="hero__badges">
+                <li>Производство и склад в Екатеринбурге</li>
+                <li>Доска, брус, вагонка в наличии</li>
+                <li>Доставка по городу и области</li>
+                <li>Помощь в подборе материала</li>
+            </ul>
+            <div class="hero__actions">
+                <a href="#calc" class="btn btn--primary btn--lg">Получить расчёт</a>
+                {% if site.whatsapp_link %}<a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener" class="btn btn--ghost btn--lg">Написать в WhatsApp</a>{% endif %}
+            </div>
+        </div>
+        <div class="hero__form" id="calc">
+            <h3 class="hero__form-title">Расчёт заказа</h3>
+            <p class="hero__form-sub">Оставьте заявку — перезвоним и назовём цену</p>
+            {% include "partials/lead_form.html" with kind="calc" button="Получить расчёт" %}
+        </div>
+    </div>
+</section>
+
+<section class="section" id="catalog">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Каталог пиломатериалов</h2>
+            <p class="section__subtitle">Основные категории продукции собственного производства</p>
+        </div>
+        <div class="categories">
+            {% for cat in categories %}
+                <a href="{{ cat.get_absolute_url }}" class="category-card">
+                    <div class="category-card__media">
+                        {% if cat.image %}
+                            <img src="{{ cat.image.url }}" alt="{{ cat.name }}" loading="lazy">
+                        {% else %}
+                            <span class="img-placeholder"><svg viewBox="0 0 24 24" width="44" height="44"><path fill="#9db8a3" d="M4 4h16v16H4V4Zm2 2v9l3-3 3 4 2-2 4 5H6V6Z"/></svg></span>
+                        {% endif %}
+                    </div>
+                    <div class="category-card__body">
+                        <h3>{{ cat.name }}</h3>
+                        <p>{{ cat.short_description|default:cat.description|truncatechars:90 }}</p>
+                        <span class="link-more">Смотреть товары →</span>
+                    </div>
+                </a>
+            {% empty %}
+                <p class="empty-note">Категории появятся после наполнения в панели администратора.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if featured_products or products %}
+<section class="section section--muted">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Популярные позиции</h2>
+            <p class="section__subtitle">Ходовые сечения в наличии на складе</p>
+        </div>
+        <div class="products-grid">
+            {% for product in featured_products %}
+                {% include "partials/product_card.html" with product=product %}
+            {% empty %}
+                {% for product in products %}
+                    {% include "partials/product_card.html" with product=product %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="section__cta">
+            <a href="{% url 'catalog:list' %}" class="btn btn--outline btn--lg">Весь каталог</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if services %}
+<section class="section" id="services">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Дополнительные услуги</h2>
+            <p class="section__subtitle">Доставка, распил, опт и подбор материалов</p>
+        </div>
+        <div class="services-grid">
+            {% for service in services %}
+                <article class="service-card">
+                    <div class="service-card__media">
+                        {% if service.image %}
+                            <img src="{{ service.image.url }}" alt="{{ service.title }}" loading="lazy">
+                        {% else %}
+                            <span class="img-placeholder"><svg viewBox="0 0 24 24" width="40" height="40"><path fill="#9db8a3" d="M4 4h16v16H4V4Zm2 2v9l3-3 3 4 2-2 4 5H6V6Z"/></svg></span>
+                        {% endif %}
+                    </div>
+                    <div class="service-card__body">
+                        <h3>{{ service.title }}</h3>
+                        <p>{{ service.text }}</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if advantages %}
+<section class="section section--muted" id="why-us">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Почему мы</h2>
+            <p class="section__subtitle">Работаем от производителя без посреднических наценок</p>
+        </div>
+        <div class="advantages-grid">
+            {% for adv in advantages %}
+                <div class="advantage">
+                    <div class="advantage__icon">{{ forloop.counter|stringformat:"02d" }}</div>
+                    <h3>{{ adv.title }}</h3>
+                    <p>{{ adv.text }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if work_steps %}
+<section class="section" id="how-we-work">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Как мы работаем</h2>
+            <p class="section__subtitle">От заявки до отгрузки</p>
+        </div>
+        <div class="steps">
+            {% for step in work_steps %}
+                <div class="step">
+                    <div class="step__num">{{ forloop.counter }}</div>
+                    <h3>{{ step.title }}</h3>
+                    <p>{{ step.text }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if applications %}
+<section class="section section--muted" id="applications">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Где применяют</h2>
+            <p class="section__subtitle">Материалы под конкретные задачи</p>
+        </div>
+        <div class="applications-grid">
+            {% for app in applications %}
+                <article class="application-card">
+                    <div class="application-card__media">
+                        {% if app.image %}
+                            <img src="{{ app.image.url }}" alt="{{ app.title }}" loading="lazy">
+                        {% else %}
+                            <span class="img-placeholder"><svg viewBox="0 0 24 24" width="40" height="40"><path fill="#9db8a3" d="M4 4h16v16H4V4Zm2 2v9l3-3 3 4 2-2 4 5H6V6Z"/></svg></span>
+                        {% endif %}
+                    </div>
+                    <div class="application-card__body">
+                        <h3>{{ app.title }}</h3>
+                        <p>{{ app.text }}</p>
+                        {% if app.tag_list %}
+                            <ul class="tags">{% for tag in app.tag_list %}<li>{{ tag }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if reviews %}
+<section class="section" id="reviews">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Отзывы</h2>
+            <p class="section__subtitle">Что говорят наши клиенты</p>
+        </div>
+        <div class="reviews-grid">
+            {% for review in reviews %}
+                <blockquote class="review">
+                    <div class="review__stars">{% for _ in "12345"|slice:review.rating %}★{% endfor %}</div>
+                    <p class="review__text">{{ review.text }}</p>
+                    <footer class="review__author">
+                        <strong>{{ review.name }}</strong>
+                        {% if review.role %}<span>{{ review.role }}</span>{% endif %}
+                        {% if review.location %}<span>{{ review.location }}</span>{% endif %}
+                    </footer>
+                    {% if review.products %}<p class="review__products">{{ review.products }}</p>{% endif %}
+                </blockquote>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if faqs %}
+<section class="section section--muted" id="faq">
+    <div class="container">
+        <div class="section__head">
+            <h2 class="section__title">Вопросы и ответы</h2>
+        </div>
+        <div class="faq">
+            {% for faq in faqs %}
+                <details class="faq__item">
+                    <summary>{{ faq.question }}</summary>
+                    <div class="faq__answer">{{ faq.answer|linebreaks }}</div>
+                </details>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section" id="contacts">
+    <div class="container contacts-grid">
+        <div class="contacts__info">
+            <h2 class="section__title">Нужен расчёт или отгрузка?</h2>
+            <p class="contacts__lead">Оставьте телефон — перезвоним, посчитаем объём и скажем срок отгрузки. Если удобнее написать — мы в WhatsApp.</p>
+            <ul class="contacts__list">
+                <li><span>Телефоны</span>
+                    {% for phone in site.phones %}
+                        <a href="tel:{{ phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">{{ phone }}</a>
+                    {% endfor %}
+                </li>
+                <li><span>Почта</span><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+                {% if site.address %}<li><span>Адрес</span>{{ site.address }}</li>{% endif %}
+                {% if site.work_hours %}<li><span>Режим работы</span>{{ site.work_hours }}</li>{% endif %}
+            </ul>
+            {% if site.map_embed %}<div class="contacts__map">{{ site.map_embed|safe }}</div>{% endif %}
+        </div>
+        <div class="contacts__form">
+            {% include "partials/lead_form.html" with kind="calc" title="Оставить заявку" button="Отправить заявку" %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

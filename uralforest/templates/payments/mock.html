@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата заказа №{{ order.number }} — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="pay-page">
+            <div class="pay-page__badge">Демонстрационный режим оплаты</div>
+            <h1>Оплата заказа №{{ order.number }}</h1>
+            <p class="pay-page__lead">
+                Платёжная система ещё не подключена. Ключи ЮKassa не заданы, поэтому показан демонстрационный экран.
+                На реальном сайте здесь откроется защищённая форма оплаты
+                {% if method == 'sbp' %}с QR-кодом СБП{% else %}банковской картой{% endif %}.
+            </p>
+
+            <div class="pay-page__summary">
+                <div class="pay-page__row"><span>Способ оплаты</span><strong>{% if method == 'sbp' %}СБП (QR-код){% else %}Банковская карта{% endif %}</strong></div>
+                <div class="pay-page__row"><span>К оплате</span><strong>{{ order.total|floatformat:0 }} ₽</strong></div>
+                <div class="pay-page__row"><span>Провайдер</span><strong>ЮKassa</strong></div>
+            </div>
+
+            <div class="pay-page__actions">
+                <form action="{% url 'payments:mock_pay' order.number %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--primary btn--lg">Оплатить (демо)</button>
+                </form>
+                <form action="{% url 'payments:mock_cancel' order.number %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--ghost btn--lg">Отменить оплату</button>
+                </form>
+            </div>
+
+            <p class="pay-page__hint">
+                Чтобы включить реальную оплату: получите Shop ID и секретный ключ в личном кабинете ЮKassa,
+                укажите их в файле <code>.env</code> и установите <code>PAYMENTS_ENABLED=true</code>.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

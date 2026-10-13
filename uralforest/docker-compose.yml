@@ -1,0 +1,38 @@
+# Docker Compose для Portainer (Stacks → Add stack → Repository / Web editor)
+# Проект собирается из Dockerfile этого репозитория.
+
+services:
+  web:
+    build: .
+    image: uralforest:latest
+    container_name: uralforest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # --- Django ---
+      DJANGO_SECRET_KEY: "ЗАМЕНИТЕ_НА_ДЛИННЫЙ_СЛУЧАЙНЫЙ_КЛЮЧ"
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: "ваш-домен.рф,www.ваш-домен.рф,IP-сервера"
+      DJANGO_CSRF_TRUSTED_ORIGINS: "https://ваш-домен.рф,https://www.ваш-домен.рф"
+      # --- База (SQLite в томе /app/data) ---
+      DB_NAME: "/app/data/db.sqlite3"
+      # --- Администратор (создаётся при первом запуске) ---
+      ADMIN_USERNAME: "admin"
+      ADMIN_PASSWORD: "ЗАМЕНИТЕ_НА_НАДЁЖНЫЙ_ПАРОЛЬ"
+      ADMIN_EMAIL: "Ural_forest@bk.ru"
+      # --- Оплата ЮKassa (включите после получения ключей) ---
+      PAYMENTS_ENABLED: "False"
+      YOOKASSA_SHOP_ID: ""
+      YOOKASSA_SECRET_KEY: ""
+      # --- Уведомления ---
+      ORDERS_NOTIFY_EMAIL: "Ural_forest@bk.ru"
+      DEFAULT_FROM_EMAIL: "Ural_forest@bk.ru"
+      GUNICORN_WORKERS: "3"
+    volumes:
+      - uralforest_data:/app/data
+      - uralforest_media:/app/media
+
+volumes:
+  uralforest_data:
+  uralforest_media:

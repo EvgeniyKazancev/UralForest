@@ -1,0 +1,75 @@
+{% load static %}
+<footer class="footer">
+    <div class="container footer__inner">
+        <div class="footer__col footer__col--brand">
+            <a href="{% url 'core:home' %}" class="logo logo--footer">
+                {% if site.logo %}
+                    <img src="{{ site.logo.url }}" alt="{{ site.company_name }}" class="logo__img">
+                {% else %}
+                    <span class="logo__mark">
+                        <svg viewBox="0 0 48 48" width="36" height="36" aria-hidden="true">
+                            <path d="M24 4 L40 14 V34 L24 44 L8 34 V14 Z" fill="#3f8f52"/>
+                            <path d="M24 12 L33 17 V31 L24 36 L15 31 V17 Z" fill="#5aa86b"/>
+                            <path d="M24 20 L28 22.5 V28 L24 30.5 L20 28 V22.5 Z" fill="#e8f0e4"/>
+                        </svg>
+                    </span>
+                    <span class="logo__text"><strong>{{ site.short_name }}</strong></span>
+                {% endif %}
+            </a>
+            <p class="footer__about">{{ site.tagline }}</p>
+            <div class="footer__social">
+                {% if site.whatsapp_link %}<a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
+                {% if site.telegram %}<a href="{{ site.telegram }}" target="_blank" rel="noopener">Telegram</a>{% endif %}
+                {% if site.vk %}<a href="{{ site.vk }}" target="_blank" rel="noopener">ВКонтакте</a>{% endif %}
+                {% if site.ok %}<a href="{{ site.ok }}" target="_blank" rel="noopener">Одноклассники</a>{% endif %}
+            </div>
+        </div>
+
+        <div class="footer__col">
+            <h4>Каталог</h4>
+            <ul>
+                {% for cat in nav_categories %}
+                    <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="footer__col">
+            <h4>Разделы</h4>
+            <ul>
+                <li><a href="{% url 'catalog:list' %}">Каталог</a></li>
+                <li><a href="{% url 'core:home' %}#services">Услуги</a></li>
+                <li><a href="{% url 'core:home' %}#reviews">Отзывы</a></li>
+                <li><a href="{% url 'core:home' %}#faq">Вопросы</a></li>
+                <li><a href="{% url 'core:contacts' %}">Контакты</a></li>
+            </ul>
+        </div>
+
+        <div class="footer__col">
+            <h4>Контакты</h4>
+            <ul class="footer__contacts">
+                {% for phone in site.phones %}
+                    <li><a href="tel:{{ phone|cut:' '|cut:'('|cut:')'|cut:'-' }}">{{ phone }}</a></li>
+                {% endfor %}
+                <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+                {% if site.address %}<li>{{ site.address }}</li>{% endif %}
+                {% if site.work_hours %}<li>{{ site.work_hours }}</li>{% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer__bottom">
+        <div class="container footer__bottom-inner">
+            <span>© {% now "Y" %} {{ site.company_name }}. Пиломатериалы в Екатеринбурге и Свердловской области.</span>
+            <span class="footer__legal">
+                {% if site.inn %}ИНН {{ site.inn }}{% endif %}
+                {% if site.ogrn %} · ОГРН {{ site.ogrn }}{% endif %}
+            </span>
+            <nav class="footer__links">
+                <a href="{% url 'core:privacy' %}">Политика конфиденциальности</a>
+                <a href="{% url 'core:personal_data' %}">Согласие на обработку данных</a>
+                <a href="{% url 'core:offer' %}">Публичная оферта</a>
+            </nav>
+        </div>
+    </div>
+</footer>

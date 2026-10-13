@@ -1,0 +1,9 @@
+<div class="modal" id="modal-callback" aria-hidden="true">
+    <div class="modal__overlay" data-modal-close></div>
+    <div class="modal__dialog">
+        <button type="button" class="modal__close" data-modal-close aria-label="Закрыть">&times;</button>
+        <h3 class="modal__title">Заказать звонок</h3>
+        <p class="modal__subtitle">Оставьте телефон — перезвоним и ответим на вопросы.</p>
+        {% include "partials/lead_form.html" with kind="callback" button="Жду звонка" compact=True %}
+    </div>
+</div>

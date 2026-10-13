@@ -1,0 +1,27 @@
+{% comment %}Универсальная форма заявки. Параметры: kind, title, button, compact{% endcomment %}
+<form action="{% url 'core:lead' %}" method="post" class="lead-form {% if compact %}lead-form--compact{% endif %}" data-lead-form>
+    {% csrf_token %}
+    <input type="hidden" name="kind" value="{{ kind|default:'callback' }}">
+    {% if title %}<p class="lead-form__title">{{ title }}</p>{% endif %}
+    <div class="lead-form__row">
+        <input type="text" name="name" placeholder="Ваше имя" class="form-control" required>
+        <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" class="form-control" data-phone required>
+    </div>
+    {% if not compact %}
+    <input type="text" name="material" placeholder="Материал или объём (необязательно)" class="form-control">
+    {% endif %}
+    <select name="contact_method" class="form-control">
+        <option value="phone">Звонок</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="telegram">Telegram</option>
+    </select>
+    {% if not compact %}
+    <textarea name="message" rows="3" placeholder="Комментарий" class="form-control"></textarea>
+    {% endif %}
+    <label class="checkbox">
+        <input type="checkbox" name="consent" checked required>
+        <span>Согласен на обработку персональных данных</span>
+    </label>
+    <button type="submit" class="btn btn--primary btn--block">{{ button|default:"Отправить заявку" }}</button>
+    <p class="lead-form__note" data-lead-note hidden></p>
+</form>

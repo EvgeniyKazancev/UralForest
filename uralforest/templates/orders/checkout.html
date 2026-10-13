@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Оформление заказа — {{ site.short_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs"><a href="{% url 'core:home' %}">Главная</a><span>/</span><a href="{% url 'cart:detail' %}">Корзина</a><span>/</span><span>Оформление</span></nav>
+</div>
+
+<section class="section section--tight">
+    <div class="container">
+        <h1 class="section__title">Оформление заказа</h1>
+
+        <form method="post" class="checkout" novalidate>
+            {% csrf_token %}
+            <div class="checkout__main">
+                <div class="checkout__block">
+                    <h3>Контактные данные</h3>
+                    <div class="form-grid">
+                        <div class="form-field">{{ form.customer_name }}{{ form.customer_name.errors }}</div>
+                        <div class="form-field">{{ form.phone }}{{ form.phone.errors }}</div>
+                        <div class="form-field">{{ form.email }}</div>
+                        <div class="form-field">{{ form.company }}</div>
+                    </div>
+                </div>
+
+                <div class="checkout__block">
+                    <h3>Способ получения</h3>
+                    <div class="form-field">{{ form.delivery_method }}</div>
+                    <div class="form-field">{{ form.address }}</div>
+                    <div class="form-field">{{ form.comment }}</div>
+                </div>
+
+                <div class="checkout__block">
+                    <h3>Способ оплаты</h3>
+                    <div class="pay-methods">
+                        {% for radio in form.payment_method %}
+                            <label class="pay-method">
+                                {{ radio.tag }}
+                                <span class="pay-method__body">
+                                    <strong>{{ radio.choice_label }}</strong>
+                                    {% if radio.data.value == 'card' %}<small>Банковской картой онлайн через ЮKassa</small>{% endif %}
+                                    {% if radio.data.value == 'sbp' %}<small>Оплата по QR-коду через СБП</small>{% endif %}
+                                    {% if radio.data.value == 'invoice' %}<small>Выставим счёт для юридического лица</small>{% endif %}
+                                    {% if radio.data.value == 'cash' %}<small>Наличными при получении заказа</small>{% endif %}
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <aside class="checkout__aside">
+                <h3>Ваш заказ</h3>
+                <ul class="checkout__items">
+                    {% for item in cart %}
+                        <li>
+                            <span>{{ item.product.name }} × {{ item.quantity|floatformat:'-3' }} {{ item.product.get_unit_display }}</span>
+                            <strong>{{ item.total|floatformat:0 }} ₽</strong>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="cart-summary__row cart-summary__row--total"><span>Итого</span><span>{{ cart.total|floatformat:0 }} ₽</span></div>
+                <label class="checkbox">{{ form.consent }}<span>Согласен на обработку персональных данных</span></label>
+                {{ form.consent.errors }}
+                <button type="submit" class="btn btn--primary btn--lg btn--block">Оформить заказ</button>
+                <p class="checkout__note">Нажимая кнопку, вы соглашаетесь с условиями публичной оферты.</p>
+            </aside>
+        </form>
+    </div>
+</section>
+{% endblock %}

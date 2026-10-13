@@ -1,0 +1,18 @@
+<div class="mobile-bar">
+    {% if site.phone1 %}
+        <a href="tel:{{ site.phone1|cut:' '|cut:'('|cut:')'|cut:'-' }}" class="mobile-bar__item">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.25 1l-2.23 2.2Z"/></svg>
+            <span>Позвонить</span>
+        </a>
+    {% endif %}
+    {% if site.whatsapp_link %}
+        <a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener" class="mobile-bar__item">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Zm5.3 14c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.2-.9s-3.6-3.4-3.7-3.6c-.1-.2-.9-1.2-.9-2.3 0-1.1.6-1.6.8-1.8.2-.2.4-.3.6-.3h.4c.1 0 .3-.1.5.4l.6 1.5c.1.1.1.3 0 .4l-.3.4-.2.2c-.1.1-.2.2 0 .4.1.2.6 1 1.3 1.6.9.8 1.6 1 1.8 1.1.2.1.4.1.5 0l.7-.8c.1-.2.3-.1.4-.1l1.4.7c.4.2.5.2.5.4 0 .1 0 .7-.2 1.2Z"/></svg>
+            <span>WhatsApp</span>
+        </a>
+    {% endif %}
+    <a href="{% url 'cart:detail' %}" class="mobile-bar__item">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM6.2 6l1 5h9.2l1.6-5H6.2ZM3 4h2.2l.6 3H21l-2.4 7.2a2 2 0 0 1-1.9 1.3H7.7a2 2 0 0 1-2-1.6L4.1 5H3V4Z"/></svg>
+        <span>Корзина (<span data-cart-count>{{ cart|length }}</span>)</span>
+    </a>
+</div>
