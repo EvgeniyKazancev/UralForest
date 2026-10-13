@@ -11,15 +11,15 @@ services:
       - "5656:5656"
     environment:
       # --- Django ---
-      DJANGO_SECRET_KEY: "ЗАМЕНИТЕ_НА_ДЛИННЫЙ_СЛУЧАЙНЫЙ_КЛЮЧ"
+      DJANGO_SECRET_KEY: "3a6bf8ed-28e6-4111-9ba8-0c44be22a69d"
       DJANGO_DEBUG: "False"
-      DJANGO_ALLOWED_HOSTS: "ваш-домен.рф,www.ваш-домен.рф,IP-сервера"
-      DJANGO_CSRF_TRUSTED_ORIGINS: "https://ваш-домен.рф,https://www.ваш-домен.рф"
+      DJANGO_ALLOWED_HOSTS: "155.212.145.174"
+      DJANGO_CSRF_TRUSTED_ORIGINS: "https://155.212.145.174:5656"
       # --- База (SQLite в томе /app/data) ---
       DB_NAME: "/app/data/db.sqlite3"
       # --- Администратор (создаётся при первом запуске) ---
       ADMIN_USERNAME: "admin"
-      ADMIN_PASSWORD: "ЗАМЕНИТЕ_НА_НАДЁЖНЫЙ_ПАРОЛЬ"
+      ADMIN_PASSWORD: "Kvadrat24"
       ADMIN_EMAIL: "Ural_forest@bk.ru"
       # --- Оплата ЮKassa (включите после получения ключей) ---
       PAYMENTS_ENABLED: "False"
