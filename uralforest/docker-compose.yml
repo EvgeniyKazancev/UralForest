@@ -8,7 +8,7 @@ services:
     container_name: uralforest
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "5656:5656"
     environment:
       # --- Django ---
       DJANGO_SECRET_KEY: "ЗАМЕНИТЕ_НА_ДЛИННЫЙ_СЛУЧАЙНЫЙ_КЛЮЧ"
